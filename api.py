@@ -26,8 +26,12 @@ model.to(device)
 model.eval()
 
 # Tokenizer and Roberta
-tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
-roberta = AutoModel.from_pretrained("xlm-roberta-base")
+try:
+    tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
+    roberta = AutoModel.from_pretrained("xlm-roberta-base")
+except Exception as e:
+    st.error(f"Error in loading RoBERTa: {e}")
+
 roberta.to(device)
 roberta.eval()
 
