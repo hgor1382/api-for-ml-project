@@ -27,8 +27,8 @@ model.eval()
 
 # Tokenizer and Roberta
 try:
-    tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
-    roberta = AutoModel.from_pretrained("xlm-roberta-base")
+    tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base", force_download=True)
+    roberta = AutoModel.from_pretrained("xlm-roberta-base", force_download=True)
 except Exception as e:
     st.error(f"Error in loading RoBERTa: {e}")
 
