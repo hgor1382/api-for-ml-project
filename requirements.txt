@@ -1,4 +1,6 @@
 streamlit
-torch
 transformers
+torch
 hazm
+scikit-learn
+setuptools
