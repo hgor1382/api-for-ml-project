@@ -4,19 +4,26 @@ import numpy as np
 from transformers import AutoTokenizer, AutoModel
 from hazm import Normalizer, word_tokenize
 import re
+import torch.nn.functional as F
+import torch.nn as nn
 
 # Load model
-class MLPClassifier(torch.nn.Module):
-    def __init__(self, input_dim=768, hidden_dim=256, output_dim=7):
+class MLPClassifier(nn.Module):
+    def __init__(self, input_dim=768, hidden_dim=512, output_dim=7):
         super(MLPClassifier, self).__init__()
-        self.fc1 = torch.nn.Linear(input_dim, hidden_dim)
-        self.dropout = torch.nn.Dropout(0.3)
-        self.fc2 = torch.nn.Linear(hidden_dim, output_dim)
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.bn1 = nn.BatchNorm1d(hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2)
+        self.bn2 = nn.BatchNorm1d(hidden_dim // 2)
+        self.fc3 = nn.Linear(hidden_dim // 2, output_dim)
+        self.dropout = nn.Dropout(0.3)
 
     def forward(self, x):
-        x = torch.relu(self.fc1(x))
+        x = F.gelu(self.bn1(self.fc1(x)))
         x = self.dropout(x)
-        x = self.fc2(x)
+        x = F.gelu(self.bn2(self.fc2(x)))
+        x = self.dropout(x)
+        x = self.fc3(x)
         return x
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
